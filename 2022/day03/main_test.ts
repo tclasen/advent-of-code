@@ -13,3 +13,13 @@ Deno.test(async function inputPart1Test() {
   const data = await Deno.readTextFile(mainModuleDir + "/" + "input.txt");
   assertEquals(solution(data), 7878);
 });
+
+Deno.test(async function samplePart2Test() {
+  const data = await Deno.readTextFile(mainModuleDir + "/" + "sample.txt");
+  assertEquals(solution(data, true), 70);
+});
+
+Deno.test(async function inputPart2Test() {
+  const data = await Deno.readTextFile(mainModuleDir + "/" + "input.txt");
+  assertEquals(solution(data, true), 2760);
+});
