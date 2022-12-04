@@ -12,15 +12,25 @@ enum PlayerMove {
   SCISSORS = "Z",
 }
 
+// X means you need to lose, Y means you need to end the round in a draw, and Z means you need to win.
+enum PlayerIntent {
+  LOSE = "X",
+  DRAW = "Y",
+  WIN = "Z",
+}
+
 type Round = {
   opponentMove: OpponentMove;
   playerMove: PlayerMove;
 };
 
-export function solution(data: string): number {
+export function solution(data: string, fix = false): number {
   const lines = data.split("\n");
   const moves = lines.map((line) => line.split(" "));
-  const rounds = moves.map((move) => parseRound(move[0], move[1]));
+  let rounds = moves.map((move) => parseRound(move[0], move[1]));
+  if (fix) {
+    rounds = rounds.map((round) => fixRoundMoves(round));
+  }
   const scores = rounds.map((round) =>
     shapeScore(round.playerMove) + roundScore(round)
   );
@@ -28,10 +38,64 @@ export function solution(data: string): number {
   return finalScore;
 }
 
+function fixRoundMoves(round: Round): Round {
+  switch (round.playerMove.valueOf()) {
+    case PlayerIntent.WIN:
+      return getWinningRound(round);
+    case PlayerIntent.DRAW:
+      return getDrawingRound(round);
+    case PlayerIntent.LOSE:
+      return getLosingRound(round);
+  }
+  return round;
+}
+
+function getWinningRound(round: Round): Round {
+  switch (round.opponentMove) {
+    case OpponentMove.ROCK:
+      return { opponentMove: round.opponentMove, playerMove: PlayerMove.PAPER };
+    case OpponentMove.PAPER:
+      return {
+        opponentMove: round.opponentMove,
+        playerMove: PlayerMove.SCISSORS,
+      };
+    case OpponentMove.SCISSORS:
+      return { opponentMove: round.opponentMove, playerMove: PlayerMove.ROCK };
+  }
+}
+
+function getDrawingRound(round: Round): Round {
+  switch (round.opponentMove) {
+    case OpponentMove.ROCK:
+      return { opponentMove: round.opponentMove, playerMove: PlayerMove.ROCK };
+    case OpponentMove.PAPER:
+      return { opponentMove: round.opponentMove, playerMove: PlayerMove.PAPER };
+    case OpponentMove.SCISSORS:
+      return {
+        opponentMove: round.opponentMove,
+        playerMove: PlayerMove.SCISSORS,
+      };
+  }
+}
+
+function getLosingRound(round: Round): Round {
+  switch (round.opponentMove) {
+    case OpponentMove.ROCK:
+      return {
+        opponentMove: round.opponentMove,
+        playerMove: PlayerMove.SCISSORS,
+      };
+    case OpponentMove.PAPER:
+      return { opponentMove: round.opponentMove, playerMove: PlayerMove.ROCK };
+    case OpponentMove.SCISSORS:
+      return { opponentMove: round.opponentMove, playerMove: PlayerMove.PAPER };
+  }
+}
+
 function parseRound(left: string, right: string): Round {
   const opponentMove = left as OpponentMove;
   const playerMove = right as PlayerMove;
-  return { opponentMove, playerMove } as Round;
+  return { opponentMove, playerMove };
 }
 
 // The score for a single round is the score for the shape you selected:
