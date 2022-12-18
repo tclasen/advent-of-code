@@ -11,19 +11,29 @@ type Challenge = {
   moves: Move[];
 };
 
-export function solution(data: string): string {
+export function solution(data: string, crateMover9001 = false): string {
   let { crateYard, moves } = parseProblemInput(data);
 
   moves.forEach((move) => {
-    crateYard = applyMove(crateYard, move);
+    crateYard = applyMove(crateYard, move, crateMover9001);
   });
   return getTopCrates(crateYard);
 }
 
-function applyMove(stacks: Stack[], move: Move): Stack[] {
+function applyMove(
+  stacks: Stack[],
+  move: Move,
+  crateMover9001: boolean,
+): Stack[] {
+  const howMany = crateMover9001 ? move.count : 1;
   for (let i = 0; i < move.count; i++) {
-    const item = stacks[move.source - 1].pop();
-    stacks[move.destination - 1].push(item || "?");
+    const items = stacks[move.source - 1].splice(0 - howMany, howMany);
+    stacks[move.destination - 1] = stacks[move.destination - 1].concat(
+      ...items,
+    );
+    if (crateMover9001) {
+      break;
+    }
   }
   return stacks;
 }

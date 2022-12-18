@@ -14,10 +14,10 @@ Deno.test(async function inputPart1Test() {
   assertEquals(solution(data), "CNSZFDVLJ");
 });
 
-// Deno.test(async function samplePart2Test() {
-//   const data = await Deno.readTextFile(mainModuleDir + "/" + "sample.txt");
-//   assertEquals(solution(data, true), 4);
-// });
+Deno.test(async function samplePart2Test() {
+  const data = await Deno.readTextFile(mainModuleDir + "/" + "sample.txt");
+  assertEquals(solution(data, true), "MCD");
+});
 
 // Deno.test(async function inputPart2Test() {
 //   const data = await Deno.readTextFile(mainModuleDir + "/" + "input.txt");
